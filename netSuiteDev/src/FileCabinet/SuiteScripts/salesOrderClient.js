@@ -13,7 +13,7 @@ function(record) {
      */
     function pageInit(context) {
         let thisRecord = context.currentRecord;
-        // check the December 2023 SO checkbox and disable the field.
+        // check the December 2023 SO checkbox and disable the field by default.
         const myRecordField = thisRecord.getField({
            fieldId:"custbody_dec2023_so"
         });
@@ -41,6 +41,7 @@ function(record) {
             const memo = thisRecord.getField({
                 fieldId:"memo"
             })
+            // specific customer ID is 32
             if (customerValue === "32"){
                 memo.isDisabled = true
             }
@@ -73,39 +74,42 @@ function(record) {
      */
     function lineInit(context) {
         const thisRecord = context.currentRecord
-        let message = "Item Note Required!";
-        let itemNote = thisRecord.getValue({
-                fieldId:"custcol_ns_pos_itemnote"
-            });
-            alert(message);
-        let lineSelect = thisRecord.getValue(
-            {
-                "fieldId":"item_display"
-            }
-        )
-            let description = thisRecord.getValue(
-                {
-                    "fieldId":"description"
-                }
-            )
-            // let des = "FOR SALE ITEM"
-            if (lineSelect){
-            description = "FOR SALE ITEM"
-            }
+        // When a line is selected or added at the item level, we would automatically
+        // want the description field to be populated with the text “FOR SALE ITEM”.
+        thisRecord.setCurrentSublistValue({
+            sublistId: 'item',
+            fieldId: 'description',
+            value: "FOR SALE ITEM"
+        });
     }
 
     /**
      * Validation function to be executed when field is changed.
      */
     function validateField(context) {
-
+    return true
     }
 
     /**
      * Validation function to be executed when sublist line is committed.
      */
     function validateLine(context) {
+        const thisRecord= context.currentRecord
+        // If a user tries to commit a line at the line level without the Item Note field,
+        // do not allow them to populate and display an alert that says “Item Note Required!”.
+        const message = "Item Note Required!";
+        const sublistValue = thisRecord.getCurrentSublistValue({
+            sublistId: 'item',
+            fieldId: 'custcol_ns_pos_itemnote'
+        });
+        console.log('sublistValue',sublistValue)
+        if (!sublistValue){
+            alert(message)
+            return false
+        }
 
+        console.log("note required")
+        return true;
     }
 
     /**
@@ -126,13 +130,13 @@ function(record) {
      * Validation function to be executed when record is saved.
      */
     function saveRecord(context) {
-
     }
 
     return {
         pageInit: pageInit,
         lineInit: lineInit,
-        fieldChanged: fieldChanged
+        fieldChanged: fieldChanged,
+        validateLine: validateLine
     };
     
 });
