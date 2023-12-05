@@ -10,21 +10,28 @@ define(['N/record'],
         /**
          * Defines the function definition that is executed before record is loaded.
          */
-        const beforeLoad = (scriptContext) => {
+        const beforeLoad = (context) => {
+            const form = context.form
+            form.addButton({
+                id: 'custpage_custombutton',
+                label: 'Test Button',
+                functionName: 'test_set_getValue'
+            });
 
         }
 
         /**
          * Defines the function definition that is executed before record is submitted.
          */
-        const beforeSubmit = (scriptContext) => {
+        const beforeSubmit = (context) => {
+            const thisRecord = context.newRecord;
 
         }
 
         /**
          * Defines the function definition that is executed after record is submitted.
          */
-        const afterSubmit = (scriptContext) => {
+        const afterSubmit = (context) => {
 
         }
 
