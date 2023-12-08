@@ -36,10 +36,10 @@ define(['N/record'], function(record) {
             fieldId: 'mobilephone'
         })
 
-        // thisRecord.setValue({
-        //     fieldId: 'otherrefnum',
-        //     value: 'HI'
-        // })
+        thisRecord.setValue({
+            fieldId: 'otherrefnum',
+            value: 'HI'
+        })
 
         console.log('customerphone', customerMobilePhone)
 
