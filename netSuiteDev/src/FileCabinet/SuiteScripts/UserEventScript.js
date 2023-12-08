@@ -13,14 +13,14 @@ define(['N/record', 'N/log'],
         function(record, log) {
             // add a button to Sales Orders called “Test Button”
             const beforeLoad = (context) => {
-            const form = context.form
-            form.addButton({
-                id: 'custpage_custombutton',
-                label: 'Test Button',
-                functionName: 'test_set_getValue'
-            });
+                const form = context.form
+                form.addButton({
+                    id: 'custpage_custombutton',
+                    label: 'Test Button',
+                    functionName: 'test_set_getValue'
+                });
 
-        }
+            }
 
         /**
          * Defines the function definition that is executed before record is submitted.
@@ -60,6 +60,7 @@ define(['N/record', 'N/log'],
                 type: "customer",
                 id: customerId,
             });
+
             // set your new field with SO sales order ID,
             loadCustomer.setValue({
                 fieldId: 'custentity_last_mod_salesorder',
