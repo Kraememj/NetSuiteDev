@@ -73,7 +73,6 @@ define(['N/record', 'N/log', 'N/search'],
                 loadSalesOrder.setValue({
                     fieldId: 'memo',
                     value: customerCommentsId
-
                 })
                 loadSalesOrder.save()
                 return true;
