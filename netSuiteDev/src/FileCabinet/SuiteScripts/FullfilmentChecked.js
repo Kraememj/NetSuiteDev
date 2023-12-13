@@ -25,14 +25,22 @@ define(['N/log', 'N/record'],
             const orderLineArray = []
             const iFulLineCount = thisRecord.getLineCount({sublistId:'item'});
             for (let i=0; i<iFulLineCount; i++){
-                const orderLine = thisRecord.getSublistValue({
+                const itemReceive = thisRecord.getSublistValue({
                     sublistId: 'item',
-                    fieldId: 'orderline',
+                    fieldId: 'itemreceive',
                     line: i
                 })
-                orderLineArray.push(orderLine)
+                if (itemReceive) {
+                    const orderLine = thisRecord.getSublistValue({
+                        sublistId: 'item',
+                        fieldId: 'orderline',
+                        line: i
+                    })
+                    orderLineArray.push(orderLine)
+                }
             }
 
+            // get the sales order value on the item fulfillment and then load to the sales order page
             const salesOrderID = thisRecord.getValue({
              fieldId: 'createdfrom'
             })
@@ -41,6 +49,9 @@ define(['N/log', 'N/record'],
                 id: salesOrderID
             })
             log.debug('sales order ID', salesOrderID)
+            // get value of sublist on the sales order page and loop through if it's available in the order line array
+            // so match the order line in the item fulfillment page with line in the sales order page the check the
+            // fulfillment shipped on the sales order page
             const lineCount = salesOrderPage.getLineCount({sublistId:'item'})
             for (let i=0; i<lineCount; i++){
                 const soLine = salesOrderPage.getSublistValue({
@@ -48,7 +59,7 @@ define(['N/log', 'N/record'],
                     fieldId: 'line',
                     line: i
                 });
-                if (orderLineArray.includes(soLine) === true){
+                if (orderLineArray.includes(soLine)){
                     salesOrderPage.setSublistValue({
                         sublistId: 'item',
                         fieldId: 'custcol_fulfillment_shipped',
@@ -56,7 +67,8 @@ define(['N/log', 'N/record'],
                         value: true
                     })
                 }
-
+                log.debug('order line array',orderLineArray)
+                log.debug('Sales order Line',soLine)
             }
 
             salesOrderPage.save()
