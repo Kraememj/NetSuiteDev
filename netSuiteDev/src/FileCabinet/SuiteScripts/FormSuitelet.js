@@ -2,11 +2,11 @@
  * @NApiVersion 2.1
  * @NScriptType Suitelet
  */
-define(['N/ui/serverWidget'],
+define(['N/ui/serverWidget', 'N/search'],
     /**
  * @param{serverWidget} serverWidget
  */
-    (serverWidget) => {
+    (serverWidget, search) => {
         /**
          * Defines the Suitelet script trigger point.
          * @param {Object} context
@@ -68,7 +68,7 @@ define(['N/ui/serverWidget'],
 
             sublist.addField({
                 id : 'custpage_customer',
-                type : serverWidget.FieldType.SELECT,
+                type : serverWidget.FieldType.TEXT,
                 label : 'Customer'
             });
 
@@ -84,8 +84,59 @@ define(['N/ui/serverWidget'],
                 label : 'Transaction Number'
             });
 
+            var mySearch = search.create({
+                type: "salesorder",
+                filters:
+                    [
+                        ["mainline","is","T"],
+                        "AND",
+                        ["internalid","anyof","112","130","1","10","100","102","103","106","109","107","108","11"],
+                        "AND",
+                        ["type","anyof","SalesOrd"]
+                    ],
+                columns:
+                    [
+                        search.createColumn({
+                            name: "ordertype",
+                            sort: search.Sort.ASC
+                        }),
+                        "tranid",
+                        "entity"
+                    ]
+            });
+            let lineCounter = 0;
+            mySearch.run().each(function(result) {
+                let entity = result.getText({
+                    name: 'entity'
+                });
+                let tranid = result.getValue('tranid');
 
-            context.response.writePage({
+                let id = result.id;
+
+                sublist.setSublistValue({
+                    id : 'custpage_customer',
+                    line : lineCounter,
+                    value : entity
+                })
+                sublist.setSublistValue({
+                    id : 'custpage_internalid',
+                    line : lineCounter,
+                    value : id
+                })
+                sublist.setSublistValue({
+                    id : 'custpage_trannumber',
+                    line : lineCounter,
+                    value : tranid
+                })
+
+
+                lineCounter++;
+                return true;
+            });
+
+
+
+        context.response.writePage({
                 pageObject: form
             });
 
