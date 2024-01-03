@@ -18,14 +18,14 @@ define(['N/record'],
 
                 // Name Obj Record something better, like loadedCustomer or customerObj
 
-                let objRecord = record.load({
+                let loadRecord = record.load({
                     type: record.Type.CUSTOMER,
                     id: requestParams.customerid,
                     isDynamic: true,
                 });
 
 
-                return objRecord
+                return loadRecord
             }
 
             /**
